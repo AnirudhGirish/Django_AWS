@@ -1,0 +1,99 @@
+
+# AWS EC2 CENTRALISED
+
+The current AWS infrastructure lacks a unified mechanism to comprehensively aggregate EC2 instance data across geographically distributed regions and organization accounts.
+
+This necessitates manual intervention to gather and consolidate instance information from disparate sources, hindering visibility and control over resources.
+
+This Django web-application developed is a centralized solution that addresses this challenge. The solution will bridge the gap by establishing a unified platform for retrieving and presenting EC2 instance data from multiple regions and accounts. This will provide a holistic view of the entire EC2 infrastructure, empowering users with improved resource management capabilities.
+
+
+## About the application
+
+* This tool offers a comprehensive solution for efficient multi-account and multi-region instance management.
+* It gathers detailed information from instances across various regions and accounts, presenting it on a single, user-friendly interface. 
+* Users can easily filter instances based on specific attributes and export the data in `CSV format`. 
+* By providing a centralized and streamlined approach, this tool significantly enhances the user experience and simplifies instance management across different environments.
+
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env file`. However, everything is included in `requirments.txt`
+
+`Django`
+`boto3`
+`cryptography`
+`sqlparse`
+`python-dateutil`
+`botocore`
+`jmespath`
+`asgiref`
+`cffi`
+`pycparser`
+`s3transfer`
+`six`
+`urllib3`
+
+
+## Run Django Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/AnirudhGirish/Django_AWS
+```
+
+Go to the project directory
+
+```bash
+  cd myproject
+```
+
+Create Virtual Environment
+
+```bash
+  python3 -m venv .env
+```
+
+Activate Virtual Environment
+
+```bash
+  source .env/bin/activate
+```
+
+Install dependencies
+
+```bash
+  pip3 install -r requirements.txt
+```
+
+Setting up the DB and Models
+
+```bash
+  python3 manage.py makemigrations
+```
+
+```bash
+  python3 manage.py migrate
+```
+
+Start the server
+
+```bash
+  python3 manage.py runserver
+```
+
+
+## Tech Stack
+
+**Frontend:** `HTML, CSS, JavaScript`
+
+**Backend:** `Django`
+
+**Database:** `SQLite3`
+
+
+## Support
+
+For support, email anirudhgirish08@gmail.com.
+
