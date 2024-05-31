@@ -14,7 +14,7 @@
         }
         body{
             background-color: #000;
-            background-image: url({% static 'myapp/images/bg.png' %});
+            background-image: url({% static 'myapp/images/bg2.png' %});
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -45,15 +45,12 @@
             justify-content: space-between;
         }
         .navbar .logo a{
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
         }
         .navbar .links{
             display: flex;
             gap: 2rem;
-        }
-        .navbar .links .font-big{
-            font-size: 20px;
         }
         .navbar .toggle-btn{
             color: #fff;
@@ -338,10 +335,10 @@
             <a href="{% url 'home' %}">AWS EC2 Collector</a>
         </div>
         <ul class="links">
-            <li><a class="font-big" href="{% url 'home' %}">Home</a></li>
-            <li><a class="font-big" href="{% url 'about' %}">About</a></li>
-            <li><a class="font-big" href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact</a></li>
-            <li><a class="font-big" href="{% url 'logout' %}">Logout</a></li>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
         </ul>
         <a href="{% url 'register' %}" class="action-btn">Get Started</a>
         <div class="toggle-btn">
@@ -582,15 +579,18 @@
             var headers = [];
             var headerCells = rows[0].querySelectorAll("th");
             for (var i = 0; i < headerCells.length; i++) {
-                headers.push(headerCells[i].innerText);
+                if(!headerCells[i].classList.contains("hidden"))
+                    headers.push(headerCells[i].innerText.replaceAll(",",""));
             }
             csv.push(headers.join(","));
         
             // Extract the data
             for (var i = 1; i < rows.length; i++) {
                 var row = [], cols = rows[i].querySelectorAll("td");
-                for (var j = 0; j < headerCells.length; j++) {
-                    row.push(cols[j].innerText);
+                for (var j = 0; j < cols.length; j++) {
+                    if(!cols[j].classList.contains("hidden")){
+                        row.push(cols[j].innerText.replaceAll(",",""));
+                    }
                 }
                 csv.push(row.join(","));
             }
