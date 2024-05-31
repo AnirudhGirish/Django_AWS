@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>AWS EC2 Central | Application</title>
+    <style>
+        {% load static %}
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: #000;
+            background-image: url({% static 'myapp/images/bg.png' %});
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        li{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+        }
+        a:hover{
+            color: orangered;
+        }
+        /* Header */
+        header{
+            position: relative;
+            padding: 0 2rem;
+        }
+        .navbar{
+            width: 100%;
+            height: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar .logo a{
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .navbar .links{
+            display: flex;
+            gap: 2rem;
+        }
+        .navbar .links .font-big{
+            font-size: 20px;
+        }
+        .navbar .toggle-btn{
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+        .action-btn{
+            background-color: orangered;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            outline: none;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: scale 0.2 ease;
+        }
+        .action-btn:hover{
+            scale: 1.05;
+            color: orangered;
+            background-color:#ffffff;
+        }
+        .action-btn:active{
+            scale:0.95;
+        }
+        /* Drop down menu */
+        .dropdown{
+            display: none;
+            position: absolute;
+            right: 2rem;
+            top: 60px;
+            width: 300px;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dropdown.open{
+            height: 240px;
+        }
+        .dropdown li{
+            padding: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dropdown .action-btn{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        /* Hero */
+        section#hero {
+            margin-top: 45px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1700px;
+            margin: 45px auto;
+        }
+        #hero h2 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        #hero table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+        #hero th, #hero td {
+            color: #fff;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        #hero th {
+            background-color: #444;
+            color: #fff;
+        }
+        #hero tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .table-container {
+            width: 100%;
+            height: fit-content;
+            overflow-x: auto;
+        }
+        .scrolling-table {
+            width: 100%;
+            height: fit-content;
+        }
+        #hero a.button, #hero button {
+            text-decoration: none;
+            color: orangered;
+            padding: 6px 12px;
+            margin: 10px 0;
+            margin-bottom: 25px;
+            display: inline-block;
+            border: 1px solid #0066cc;
+            border-radius: 4px;
+            background-color: #ffffff;
+            transition: background-color 0.3s ease;
+        }
+        #hero a.button:hover, #hero button:hover {
+            background-color: orangered;
+            color: #ffffff;
+        }
+        #hero .button-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        #hero input[type="text"] {
+            padding: 8px;
+            width: calc(100% - 600px);
+            margin-top: 20px;
+            border: 1.5px solid orangered;
+            border-radius: 4px;
+            background: #fff;
+            color: orangered;
+            margin-bottom: 25px;
+        }
+        .dropdowns-content {
+            border-radius: 5px;
+            display: none;
+            position: absolute;
+            background-color: orangered;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdowns-content a {
+            color: #fff;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdowns-content a:hover {
+            background-color: #fff;
+            color: orangered;
+        }
+        .selected-item {
+            background-color: #dad8c9 !important;
+            color: orangered !important;
+        }
+        .selected-item:hover {
+            background-color: orangered !important;
+            color: #fff !important;
+        }
+        .dropdowns:hover .dropdowns-content {
+            display: block;
+        }
+        .dropdown-content-container {
+            max-height: 220px; /* Adjust the max-height as needed */
+            overflow-y: auto;
+        }
+        .hidden {
+            display: none;
+        }
+        /* footer */
+        .container{
+            line-height: 25px;
+            max-width: 1350px;
+            margin: auto;
+        }
+        .container p{
+            display: flex;
+            justify-content: center;
+            color: #ffffff;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        .row{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        ul{
+            list-style: none;
+        }
+        .footer{
+            background-color: #24262b;
+            padding: 35px 0;
+        }
+        .footer-col{
+            width: 25%;
+            padding: 0 15px;
+        }
+        .footer-col h4{
+            text-transform: capitalize;
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: orangered;
+            position: relative;
+        }
+        .footer-col h4::before{
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            background-color:yellow;
+            height: 2px;
+            box-sizing: border-box;
+            width: 75px;
+        }
+        .footer-col ul li:not(:last-child){
+            margin-bottom: 10px;
+        }
+        .footer-col ul li a{
+            font-size :16px;
+            text-transform: capitalize;
+            color: #ffffff;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        .footer-col ul li a:hover{
+            color: orangered;
+            padding-left: 10px;
+        }
+        .footer-col .social-links a{
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 0 10px 10px 0;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            color: #ffffff;
+            transition: all 0.5s ease;
+        }
+        .footer-col .social-links a:hover{
+            color: orangered;
+            background-color: #ffffff;
+        }
+        /* Responsive */
+        @media(max-width:992px){
+            .navbar .links,
+            .navbar .action-btn{
+                display: none;
+            }
+            .navbar .toggle-btn{
+                display: block;
+            }
+            .dropdown{
+                display: block;
+            }
+        }
+        @media(max-width:575px){
+            .dropdown{
+                left: 2rem;
+                width: unset;
+            }
+        }
+        @media(max-width:767px){
+            .footer-col{
+                width: 50%;
+                margin-bottom: 30px;
+            }
+        }
+        @media(max-width:574px){
+            .footer-col{
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">AWS EC2 Collector</a>
+        </div>
+        <ul class="links">
+            <li><a class="font-big" href="{% url 'home' %}">Home</a></li>
+            <li><a class="font-big" href="{% url 'about' %}">About</a></li>
+            <li><a class="font-big" href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact</a></li>
+            <li><a class="font-big" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+        <a href="{% url 'register' %}" class="action-btn">Get Started</a>
+        <div class="toggle-btn">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </div>
+    <div class="dropdown">
+        <li ><a href="{% url 'home' %}">Home</a></li>
+        <li ><a href="{% url 'about' %}">About</a></li>
+        <li ><a href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact</a></li>
+        <li ><a href="{% url 'logout' %}">Logout</a></li>
+        <li ><a href="{% url 'register' %}" class="action-btn">Get Started</a></li>
+    </div>
+
+    <main>
+        <section id="hero">
+            <h2>List of EC2 Instances</h2>
+            <div class="button-container">              
+                <a href="{% url 'profile' %}" class="button">Profiles</a>
+                <button type="button" class="export-csv-btn" onclick="exportTableToCSV()">Export to CSV</button>
+                <div class="dropdowns">
+                    <button type="button">Add Column</button>
+                    <div class="dropdowns-content">
+                        <div class="dropdown-content-container">
+                            <a href="#" data-column="Architecture">Architecture</a>
+                            <a href="#" data-column="BlockDeviceMappings">Block Device Mappings</a>
+                            <a href="#" data-column="CapacityReservationId">Capacity Reservation ID</a>
+                            <a href="#" data-column="CurrentInstanceBootMode">Current Instance Boot Mode</a>
+                            <a href="#" data-column="DnsName">DNS Name</a>
+                            <a href="#" data-column="EbsOptimized">EBS Optimized</a>
+                            <a href="#" data-column="EnaSupport">ENA Support</a>
+                            <a href="#" data-column="HostId">Host ID</a>
+                            <a href="#" data-column="IamInstanceProfile.Name">IAM Instance Profile Name</a>
+                            <a href="#" data-column="InstanceLifecycle">Instance Lifecycle</a>
+                            <a href="#" data-column="SecurityGroups">Instance Group Name</a>
+                            <a href="#" data-column="LaunchTime">Launch Time</a>
+                            <a href="#" data-column="MetadataOptions.HttpEndpoint">Metadata Options HTTP Endpoint</a>
+                            <a href="#" data-column="MetadataOptions.HttpTokens">Metadata Options HTTP Tokens</a>
+                            <a href="#" data-column="Monitoring.State">Monitoring State</a>
+                            <a href="#" data-column="NetworkInterfaces">Network Interfaces</a>
+                            <a href="#" data-column="PlacementGroupName">Placement Group Name</a>
+                            <a href="#" data-column="PlatformDetails">Platform Details</a>
+                            <a href="#" data-column="ProductCodes">Product Codes</a>
+                            <a href="#" data-column="ReservationId">Reservation ID</a>
+                            <a href="#" data-column="RootDeviceType">Root Device Type</a>
+                            <a href="#" data-column="SpotInstanceRequestId">Spot Instance Request ID</a>
+                            <a href="#" data-column="TpmSupport">TPM Support</a>
+                            <a href="#" data-column="UsageOperation">Usage Operation</a>
+                            <a href="#" data-column="VpcId">VPC ID</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="text" id="filter" placeholder="Filter instances by ID, name, or type" onkeyup="filterInstances()">
+            <div class="table-container">
+                <div class="scrolling-table">
+                    <table id="instances-table">
+                        <thead>
+                                <tr>
+                                    <th>Instance ID</th>
+                                    <th>Status</th>
+                                    <th>Availability Zone</th>
+                                    <th>Region</th>
+                                    <th>Key Name</th>
+                                    <th>Tenancy</th>
+                                    <th>Platform</th>
+                                    <th>Owner ID</th>
+                                    <th>Instance Type</th>
+                                    <th>Private IP Address</th>
+                                    <th>Public IP Address</th>
+                                    <th>Image ID</th>
+                                    <th class="hidden" data-key="Architecture">Architecture</th>
+                                    <th class="hidden" data-key="BlockDeviceMappings">Block Device Mappings</th>
+                                    <th class="hidden" data-key="CapacityReservationId">Capacity Reservation ID</th>
+                                    <th class="hidden" data-key="CurrentInstanceBootMode">Current Instance Boot Mode</th>
+                                    <th class="hidden" data-key="DnsName">DNS Name</th>
+                                    <th class="hidden" data-key="EbsOptimized">EBS Optimized</th>
+                                    <th class="hidden" data-key="EnaSupport">ENA Support</th>
+                                    <th class="hidden" data-key="HostId">Host ID</th>
+                                    <th class="hidden" data-key="IamInstanceProfile.Name">IAM Instance Profile Name</th>
+                                    <th class="hidden" data-key="InstanceLifecycle">Instance Lifecycle</th>
+                                    <th class="hidden" data-key="SecurityGroups">Instance Group Name</th>
+                                    <th class="hidden" data-key="LaunchTime">Launch Time</th>
+                                    <th class="hidden" data-key="MetadataOptions.HttpEndpoint">Metadata Options HTTP Endpoint</th>
+                                    <th class="hidden" data-key="MetadataOptions.HttpTokens">Metadata Options HTTP Tokens</th>
+                                    <th class="hidden" data-key="Monitoring.State">Monitoring State</th>
+                                    <th class="hidden" data-key="NetworkInterfaces">Network Interfaces</th>
+                                    <th class="hidden" data-key="PlacementGroupName">Placement Group Name</th>
+                                    <th class="hidden" data-key="PlatformDetails">Platform Details</th>
+                                    <th class="hidden" data-key="ProductCodes">Product Codes</th>
+                                    <th class="hidden" data-key="ReservationId">Reservation ID</th>
+                                    <th class="hidden" data-key="RootDeviceType">Root Device Type</th>
+                                    <th class="hidden" data-key="SpotInstanceRequestId">Spot Instance Request ID</th>
+                                    <th class="hidden" data-key="TpmSupport">TPM Support</th>
+                                    <th class="hidden" data-key="UsageOperation">Usage Operation</th>
+                                    <th class="hidden" data-key="VpcId">VPC ID</th>
+                                </tr>
+                        </thead>
+                        <tbody id="instances_table">
+                            {% for instance in instances %}
+                            <tr>
+                                <td>{{ instance.InstanceId }}</td>
+                                <td>{{ instance.State }}</td>
+                                <td>{{ instance.AvailabilityZone }}</td>
+                                <td>{{ instance.Region }}</td>
+                                <td>{{ instance.KeyName }}</td>
+                                <td>{{ instance.Tenancy }}</td>
+                                <td>{{ instance.Platform }}</td>
+                                <td>{{ instance.AccountID }}</td>
+                                <td>{{ instance.InstanceType }}</td>
+                                <td>{{ instance.PrivateIpAddress }}</td>
+                                <td>{{ instance.PublicIpAddress }}</td>
+                                <td>{{ instance.ImageId }}</td>
+                                <td class="hidden" data-key="Architecture">{{ instance.Architecture }}</td>
+                                <td class="hidden" data-key="BlockDeviceMappings">{{ instance.BlockDeviceMappings }}</td>
+                                <td class="hidden" data-key="CapacityReservationId">{{ instance.CapacityReservationId }}</td>
+                                <td class="hidden" data-key="CurrentInstanceBootMode">{{ instance.CurrentInstanceBootMode }}</td>
+                                <td class="hidden" data-key="DnsName">{{ instance.DnsName }}</td>
+                                <td class="hidden" data-key="EbsOptimized">{{ instance.EbsOptimized }}</td>
+                                <td class="hidden" data-key="EnaSupport">{{ instance.EnaSupport }}</td>
+                                <td class="hidden" data-key="HostId">{{ instance.HostId }}</td>
+                                <td class="hidden" data-key="IamInstanceProfile.Name">{{ instance.IamInstanceProfile}}</td>
+                                <td class="hidden" data-key="InstanceLifecycle">{{ instance.InstanceLifecycle }}</td>
+                                <td class="hidden" data-key="SecurityGroups">{{ instance.SecurityGroups }}</td>
+                                <td class="hidden" data-key="LaunchTime">{{ instance.LaunchTime }}</td>
+                                <td class="hidden" data-key="MetadataOptions.HttpEndpoint">{{ instance.MetadataOptions.HttpEndpoint }}</td>
+                                <td class="hidden" data-key="MetadataOptions.HttpTokens">{{ instance.MetadataOptions.HttpTokens }}</td>
+                                <td class="hidden" data-key="Monitoring.State">{{ instance.MonitoringState }}</td>
+                                <td class="hidden" data-key="NetworkInterfaces">{{ instance.NetworkInterfaces }}</td>
+                                <td class="hidden" data-key="PlacementGroupName">{{ instance.PlacementGroupName }}</td>
+                                <td class="hidden" data-key="PlatformDetails">{{ instance.PlatformDetails }}</td>
+                                <td class="hidden" data-key="ProductCodes">{{ instance.ProductCodes }}</td>
+                                <td class="hidden" data-key="ReservationId">{{ instance.ReservationId }}</td>
+                                <td class="hidden" data-key="RootDeviceType">{{ instance.RootDeviceType }}</td>
+                                <td class="hidden" data-key="SpotInstanceRequestId">{{ instance.SpotInstanceRequestId }}</td>
+                                <td class="hidden" data-key="TpmSupport">{{ instance.TpmSupport }}</td>
+                                <td class="hidden" data-key="UsageOperation">{{ instance.UsageOperation }}</td>
+                                <td class="hidden" data-key="VpcId">{{ instance.VpcId }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="https://aws.amazon.com/about-aws/?nc2=h_header" target="_blank">About AWS</a></li>
+                        <li><a href="https://aws.amazon.com/compliance/data-protection/" target="_blank">Privacy Policy</a></li>
+                        <li><a href="https://aws.amazon.com/modern-apps/services/" target="_blank">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Get Help</h4>
+                    <ul>
+                        <li><a href="https://aws.amazon.com/faqs/" target="_blank">FAQ</a></li>
+                        <li><a href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact US</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/amazonwebservices/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://x.com/awscloud" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="https://www.instagram.com/amazonwebservices" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/amazon-web-services" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <p>Copyright &copy; AWS 2024. All Rights Reserved.</p>
+        </div>
+    </footer>
+    <script>
+        console.log('JS is running');
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggleBtn = document.querySelector('.toggle-btn');
+            const toggleBtnIcon = document.querySelector('.toggle-btn i');
+            const dropdown = document.querySelector('.dropdown');
+        
+            toggleBtn.onclick = function() {
+                dropdown.classList.toggle('open');
+                const isOpen = dropdown.classList.contains('open');
+        
+                toggleBtnIcon.classList = isOpen
+                    ? 'fa-solid fa-xmark'
+                    : 'fa-solid fa-bars';
+            }
+        
+            document.getElementById('filter').addEventListener('input', function() {
+                const searchText = this.value.toLowerCase();
+                const tableRows = document.getElementById('instances_table').getElementsByTagName('tr');
+                for (let row of tableRows) {
+                    const cells = row.getElementsByTagName('td');
+                    let rowText = '';
+                    for (let cell of cells) {
+                        rowText += cell.innerText.toLowerCase() + ' ';
+                    }
+                    if (rowText.includes(searchText)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        
+            document.querySelectorAll('.dropdowns-content a').forEach(item => {
+                item.addEventListener('click', function(event) {
+                    item.classList.toggle("selected-item");
+                    event.preventDefault();
+                    const column = this.getAttribute('data-column');
+                    const table = document.querySelector('table thead tr');
+                    const rows = document.querySelectorAll('table tbody tr');
+                    const hiddenHeader = document.querySelector(`th[data-key="${column}"]`);
+                    if (hiddenHeader) {
+                        hiddenHeader.classList.toggle('hidden');
+                    } 
+                    // Add the cells for each row
+                    rows.forEach(row => {
+                        const hiddenCell = row.querySelector(`td[data-key="${column}"]`);
+                        if (hiddenCell) {
+                            hiddenCell.classList.toggle('hidden');
+                        } 
+                    });
+                });
+            });
+        });
+        
+        function exportTableToCSV() {
+            var csv = [];
+            var rows = document.querySelectorAll("#instances-table tr");
+        
+            // Extract the headers
+            var headers = [];
+            var headerCells = rows[0].querySelectorAll("th");
+            for (var i = 0; i < headerCells.length; i++) {
+                headers.push(headerCells[i].innerText);
+            }
+            csv.push(headers.join(","));
+        
+            // Extract the data
+            for (var i = 1; i < rows.length; i++) {
+                var row = [], cols = rows[i].querySelectorAll("td");
+                for (var j = 0; j < headerCells.length; j++) {
+                    row.push(cols[j].innerText);
+                }
+                csv.push(row.join(","));
+            }
+        
+            downloadCSV(csv.join("\n"));
+        }
+        
+        function downloadCSV(csv) {
+            var csvFile;
+            var downloadLink;
+            csvFile = new Blob([csv], {type: "text/csv"});
+            downloadLink = document.createElement("a");
+            downloadLink.download = "ec2_instances.csv";
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>AWS EC2 Central | Register</title>
+    <style>
+        {% load static %}
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            height: 100vh;
+            background-color: #000;
+            background-image: url({% static 'myapp/images/bg3.png' %});
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        li{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+        }
+        a:hover{
+            color: orangered;
+        }
+        /* Header */
+        header{
+            position: relative;
+            padding: 0 2rem;
+        }
+        .navbar{
+            width: 100%;
+            height: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar .logo a{
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .navbar .links{
+            display: flex;
+            gap: 2rem;
+        }
+        .navbar .links .font-big{
+            font-size: 20px;
+        }
+        .navbar .toggle-btn{
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+        .action-btn{
+            background-color: orangered;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            outline: none;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: scale 0.2 ease;
+        }
+        .action-btn:hover{
+            scale: 1.05;
+            color: orangered;
+            background-color: #ffffff;
+        }
+        .action-btn:active{
+            scale:0.95;
+        }
+        /* Drop down menu */
+        .dropdown{
+            display: none;
+            position: absolute;
+            right: 2rem;
+            top: 60px;
+            width: 300px;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dropdown.open{
+            height: 240px;
+        }
+        .dropdown li{
+            padding: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dropdown .action-btn{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        /* Hero */
+        section#hero{
+            height: calc(100vh - 60px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-height: 100vh;
+        }
+        .wrapper{
+            width: 600px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 30px 40px;
+        }
+        .wrapper h1{
+            font-size: 30px;
+            text-align: center;
+        }
+        .wrapper .inp-box{
+            position: relative;
+            width: 100%;
+            height: 50px;
+            margin: 30px 0;
+        }
+        .inp-box input{
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            font-size: 16px;
+            color: #ffffff;
+            padding: 20px 45px 20px 20px;
+        }
+        .inp-box input::placeholder{
+            color: #ffffff;
+        }
+        .inp-box i{
+            position: absolute;
+            right: 20px;
+            top: 32%;
+            transform: translate(-50%);
+            font-size: 20px;
+        }
+        .wrapper .btn{
+            width: 100%;
+            height: 45px;
+            background:orangered;
+            border: none;
+            outline: none;
+            border-radius: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 600;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .wrapper .btn:hover{
+            color: orangered;
+            background-color: #ffffff;
+        }
+        .wrapper.register-link{
+            font-size: 14.5px;
+            text-align: center;
+            margin: 20px 0 15px;
+        }
+        .register-link p a{
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            padding-left: 8px;
+
+        }
+        .register-link p a:hover{
+            text-decoration: underline;
+            color: orangered;
+        }
+        /* footer */
+        .container{
+            line-height: 25px;
+            max-width: 1350px;
+            margin: auto;
+        }
+        .container p{
+            display: flex;
+            justify-content: center;
+            color: #ffffff;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        .row{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        ul{
+            list-style: none;
+        }
+        .footer{
+            background-color: #24262b;
+            padding: 35px 0;
+        }
+        .footer-col{
+            width: 25%;
+            padding: 0 15px;
+        }
+        .footer-col h4{
+            text-transform: capitalize;
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: orangered;
+            position: relative;
+        }
+        .footer-col h4::before{
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            background-color:yellow;
+            height: 2px;
+            box-sizing: border-box;
+            width: 75px;
+        }
+        .footer-col ul li:not(:last-child){
+            margin-bottom: 10px;
+        }
+        .footer-col ul li a{
+            font-size :16px;
+            text-transform: capitalize;
+            color: #ffffff;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        .footer-col ul li a:hover{
+            color: orangered;
+            padding-left: 10px;
+        }
+        .footer-col .social-links a{
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 0 10px 10px 0;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            color: #ffffff;
+            transition: all 0.5s ease;
+        }
+        .footer-col .social-links a:hover{
+            color: orangered;
+            background-color: #ffffff;
+        }
+        /* Responsive */
+        @media(max-width:992px){
+            .navbar .links,
+            .navbar .action-btn{
+                display: none;
+            }
+            .navbar .toggle-btn{
+                display: block;
+            }
+            .dropdown{
+                display: block;
+            }
+        }
+        @media(max-width:575px){
+            .dropdown{
+                left: 2rem;
+                width: unset;
+            }
+        }
+        @media(max-width:767px){
+            .footer-col{
+                width: 50%;
+                margin-bottom: 30px;
+            }
+        }
+        @media(max-width:574px){
+            .footer-col{
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">AWS EC2 Collector</a>
+        </div>
+        <ul class="links">
+            <li><a class="font-big" href="{% url 'home' %}">Home</a></li>
+            <li><a class="font-big" href="{% url 'about' %}">About</a></li>
+            <li><a class="font-big" href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact</a></li>
+            <li><a class="font-big" href="{% url 'login' %}">Login</a></li>
+        </ul>
+        <a href="{% url 'register' %}" class="action-btn">Get Started</a>
+        <div class="toggle-btn">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </div>
+    <div class="dropdown">
+        <li ><a href="{% url 'home' %}">Home</a></li>
+        <li ><a href="{% url 'about' %}">About</a></li>
+        <li ><a href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact</a></li>
+        <li ><a href="{% url 'login' %}">Login</a></li>
+        <li ><a href="{% url 'register' %}" class="action-btn">Get Started</a></li>
+    </div>
+    <main>
+        <section id="hero">
+            <div class="wrapper">
+                 <form action="" method="post">
+                 {% csrf_token %}
+                     <h1>Register</h1>
+                     <div class="inp-box">
+                         <input type="text" name="username" placeholder="New Username" required>
+                         <i class="fa-solid fa-user"></i>
+                     </div>
+                     <div class="inp-box">
+                         <input type="password" name="password" placeholder="Set Password" required>
+                         <i class="fa-solid fa-lock"></i>
+                     </div>
+                     <button type="submit" value="Register" class="btn">Register</button>
+                     <div class="register-link">
+                         <p>Have an account?<a href="{% url 'login' %}">Login</a></p>
+                     </div>
+                 </form>
+            </div>
+         </section>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="https://aws.amazon.com/about-aws/?nc2=h_header" target="_blank">About AWS</a></li>
+                        <li><a href="https://aws.amazon.com/compliance/data-protection/" target="_blank">Privacy Policy</a></li>
+                        <li><a href="https://aws.amazon.com/modern-apps/services/" target="_blank">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Get Help</h4>
+                    <ul>
+                        <li><a href="https://aws.amazon.com/faqs/" target="_blank">FAQ</a></li>
+                        <li><a href="https://aws.amazon.com/contact-us/?nc2=h_header" target="_blank">Contact US</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/amazonwebservices/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://x.com/awscloud" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="https://www.instagram.com/amazonwebservices" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/amazon-web-services" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <p>Copyright &copy; AWS 2024. All Rights Reserved.</p>
+        </div>
+    </footer>
+    <script>
+        const togglebtn = document.querySelector('.toggle-btn')
+        const togglebtnicn = document.querySelector('.toggle-btn i')
+        const dropdon = document.querySelector('.dropdown')
+
+        togglebtn.onclick = function(){
+            dropdon.classList.toggle('open')
+            const isOpen = dropdon.classList.contains('open')
+
+            togglebtnicn.classList = isOpen
+                ? 'fa-solid fa-xmark'
+                : 'fa-solid fa-bars'
+        }
+    </script>
+</body>
+</html>
